@@ -109,7 +109,7 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
-        name: OpenWrt_bin-x86-Lean
+        name: OpenWrt_wuge_Lean
         path: openwrt/bin
 
     - name: 固件打包
@@ -127,5 +127,5 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
-        name: OpenWrt-x86-Lean
+        name: OpenWrt-wuge
         path: ${{ env.FIRMWARE }}
