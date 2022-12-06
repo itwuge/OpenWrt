@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: OpenWrt-x86-Lienol
+name: OpenWrt-wuge-Lienol
 
 on:
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
-    - name: Checkout
+    - name: 拉取源码
       uses: actions/checkout@master
 
     - name: 初始环境
@@ -69,7 +69,7 @@ jobs:
 
     - name: 导入自定义
       run: |
-        git clone https://github.com/sypopo/diy ./openwrt/diy/sypopo
+        git clone https://github.com/itwuge/diy ./openwrt/diy/sypopo
         mv ./openwrt/diy/sypopo/$CONFIG_FILE $(pwd)
         mv ./openwrt/diy/sypopo/$DIY_SH $(pwd)
         df -h && pwd
@@ -78,7 +78,7 @@ jobs:
         chmod +x $DIY_SH && cd openwrt && ../$DIY_SH
 
     - name: SSH连接
-      uses: sypopo/debugger-action@master
+      uses: itwuge/Actions@master
       if: env.SSH_ACTIONS == 'true'
         
     - name: 下载软件包
@@ -109,7 +109,7 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
-        name: OpenWrt_bin-x86-Lienol
+        name: OpenWrt_bin-wuge-Lienol
         path: openwrt/bin
 
     - name: 固件打包
@@ -127,6 +127,6 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
-        name: OpenWrt-x86-Lienol
+        name: OpenWrt-wuge-Lienol
         path: ${{ env.FIRMWARE }}
 
