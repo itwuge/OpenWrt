@@ -127,5 +127,5 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
-        name: OpenWrt-wuge
+        name: OpenWrt-wuge-Lean
         path: ${{ env.FIRMWARE }}
