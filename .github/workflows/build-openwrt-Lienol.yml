@@ -39,7 +39,7 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
-    - name: 拉取源码
+    - name: 拉取项目
       uses: actions/checkout@master
 
     - name: 初始环境
