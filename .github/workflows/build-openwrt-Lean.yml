@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: build-openwrt-Lean
+name: Openwrt-wuge-Lean
 
 on:
   workflow_dispatch:
@@ -109,7 +109,7 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
-        name: OpenWrt_wuge_Lean
+        name: OpenWrt_bin-wuge_Lean
         path: openwrt/bin
 
     - name: 固件打包
