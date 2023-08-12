@@ -53,6 +53,7 @@ jobs:
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
           sudo timedatectl set-timezone "$TZ" 
+          export FORCE_UNSAFE_CONFIGURE=1
           
           echo "========================================"
           echo "[Space Usage]:"
@@ -107,7 +108,7 @@ jobs:
         cp -f .config ./bin/targets/*/*/
         
     - name: 上传bin
-      uses: actions/upload-artifact@master
+      uses: actions/checkout@v3
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
         name: OpenWrt_bin-wuge-Lean
