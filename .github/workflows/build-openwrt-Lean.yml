@@ -29,9 +29,6 @@ env:
   CONFIG_FILE: config-x86-Lean
   DIY_SH: diy-x86-Lean.sh
   SSH_ACTIONS:  false
-  UPLOAD_BIN_DIR: true
-  UPLOAD_FIRMWARE: true
-  UPLOAD_COWTRANSFER: false
   TZ: Asia/Shanghai
 
 jobs:
@@ -115,6 +112,7 @@ jobs:
         rm -rf $(find ./bin/targets/ -type d -name "packages")
         cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
         cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
+        cp ./.config ./artifact/buildinfo/
 
     - name: 上传构建信息
       uses: actions/upload-artifact@v3
