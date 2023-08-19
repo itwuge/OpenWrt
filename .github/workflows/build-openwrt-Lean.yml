@@ -107,36 +107,29 @@ jobs:
         du -h --max-depth=1 ./bin
         cp -f .config ./bin/targets/*/*/
         
-    - name: 上传bin
-      uses: actions/checkout@v3
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
-      with:
-        name: OpenWrt_bin-wuge-Lean
-        path: openwrt/bin
-
-    - name: 固件打包
-      id: organize
-      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+    - name: 整理文件
       run: |
-        cp openwrt/.config  openwrt/bin/targets/x86/64/config.txt
-        tar -czf bin.tar.gz openwrt/bin && cp -vf bin.tar.gz openwrt/bin/targets/x86/64
-        cd openwrt/bin/targets/*/*
-        rm -rf packages *rootfs* *vmlinuz *info *fest
-        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        echo "::set-output name=status::success"
+        cd openwrt
+        mkdir -p ./artifact/package
+        mkdir -p ./artifact/buildinfo
+        rm -rf $(find ./bin/targets/ -type d -name "packages")
+        cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
+        cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
+
+    - name: 上传构建信息
+      uses: actions/upload-artifact@v3
+      with:
+        name: OpenWrt_buildinfo
+        path: ./openwrt/artifact/buildinfo/
+
+    - name: 长传包
+      uses: actions/upload-artifact@v3
+      with:
+        name: OpenWrt_package
+        path: ./openwrt/artifact/package/
 
     - name: 上传固件
-      uses: actions/upload-artifact@master
-      if: steps.organize.outputs.status == 'success' && !cancelled()
+      uses: actions/upload-artifact@v3
       with:
-        name: OpenWrt-wuge-Lean
-        path: ${{ env.FIRMWARE }}
-        
-    - name: 将固件上载到奶牛快传
-      id: cowtransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled() 
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-        ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
-        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
-        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
+        name: OpenWrt_firmware
+        path: ./openwrt/bin/targets/
